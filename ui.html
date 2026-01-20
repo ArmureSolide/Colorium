@@ -1,0 +1,21 @@
+<script>
+    window.onmessage = (event) => {
+        try {
+            const msg = event.data.pluginMessage;
+
+            if (msg.type === 'download') {
+                const blob = new Blob([msg.content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = msg.filename;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                parent.postMessage({ pluginMessage: "success" }, "*");
+            }
+        } catch (err) {
+            parent.postMessage({ pluginMessage: err.message }, "*");
+        }
+    };
+</script>
