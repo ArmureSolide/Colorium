@@ -28,12 +28,14 @@ async function getColorValue(variable, mode) {
 
 function formatModeName(name) {
   return name
+    .replace(/[^\p{L}\p{N}\s/_-]+/gu, '')
     .replace(/[/\-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() : '')
     .replace(/^(.)/, c => c.toUpperCase());
 }
 
 function formatVariableName(name, suffix) {
   return name
+    .replace(/[^\p{L}\p{N}\s/_-]+/gu, '')
     .replace(/[/\-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() : '')
     .replace(/^(.)/, c => c.toLowerCase())
     .concat(suffix);
