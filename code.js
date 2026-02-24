@@ -26,19 +26,11 @@ async function getColorValue(variable, mode) {
     }
 }
 
-function formatModeName(name) {
+function formatVariableName(name) {
   return name
     .replace(/[^\p{L}\p{N}\s/_-]+/gu, '')
     .replace(/[/\-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() : '')
-    .replace(/^(.)/, c => c.toUpperCase());
-}
-
-function formatVariableName(name, suffix) {
-  return name
-    .replace(/[^\p{L}\p{N}\s/_-]+/gu, '')
-    .replace(/[/\-_\s]+(.)?/g, (_, c) => c ? c.toUpperCase() : '')
-    .replace(/^(.)/, c => c.toLowerCase())
-    .concat(suffix);
+    .replace(/^(.)/, c => c.toLowerCase());
 }
 
 function saveToFile(filename, content) {
@@ -63,17 +55,16 @@ async function run() {
                let variable = await figma.variables.getVariableByIdAsync(variableId);
 
                if (variable.resolvedType == COLOR_TYPE) {
-                    for (const [index, mode] of modes.entries()) {
-                        var suffix = ""
-                        if (index > 0) {
-                            suffix = formatModeName(mode.name);
-                        }
+                    let colorValueAccumulator = ""
 
-                        let name = formatVariableName(variable.name, suffix);
+                    for (const [index, mode] of modes.entries()) {
                         let colorValue = await getColorValue(variable, mode);
 
-                        colorAccumulator += `${name} = #${colorValue}\n`;
+                        colorValueAccumulator += `#${colorValue} `
                     }
+
+                    let name = formatVariableName(variable.name);
+                    colorAccumulator += `${name} = ${colorValueAccumulator.trimEnd()}\n`;
                }
             }
 
